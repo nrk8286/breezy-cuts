@@ -4,7 +4,7 @@ Mobile-first booking for **Breezy Cuts — “Fresh Cuts. Easy Booking.”**
 
 ## Live app
 
-**https://breezy-cuts-app.nrk8286.workers.dev**
+**https://breezycutz.shop**
 
 The public app is a Cloudflare Worker backed by a strongly consistent, SQLite-backed Durable Object. It supports service/barber browsing, customer registration and login, secure sessions, guest or account bookings, conflict-safe appointment slots, and customer appointment history.
 
