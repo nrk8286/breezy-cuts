@@ -15,6 +15,7 @@ export class BreezyDatabase extends DurableObject<CloudflareEnv> {
         CREATE TABLE IF NOT EXISTS services (id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, duration_minutes INTEGER NOT NULL, price_cents INTEGER NOT NULL, category TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1);
         CREATE TABLE IF NOT EXISTS bookings (id TEXT PRIMARY KEY, customer_id TEXT, service_id TEXT NOT NULL, barber_id TEXT NOT NULL, customer_name TEXT NOT NULL, customer_email TEXT NOT NULL, customer_phone TEXT NOT NULL, start_time TEXT NOT NULL, end_time TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'confirmed', notes TEXT, created_at TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS booking_slots (barber_id TEXT NOT NULL, slot_time TEXT NOT NULL, booking_id TEXT NOT NULL, PRIMARY KEY (barber_id, slot_time));
+        CREATE TABLE IF NOT EXISTS internal_migrations (name TEXT PRIMARY KEY, completed_at TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS idx_bookings_barber_time ON bookings(barber_id, start_time, end_time);
         CREATE INDEX IF NOT EXISTS idx_bookings_customer ON bookings(customer_id, start_time);
         CREATE INDEX IF NOT EXISTS idx_booking_slots_booking ON booking_slots(booking_id);
@@ -28,6 +29,10 @@ export class BreezyDatabase extends DurableObject<CloudflareEnv> {
           ('barber-marcus-reed',NULL,'Marcus Reed','Fade specialist with a clean, detail-first approach.','Fades,Texture,Beards','MR',1),
           ('barber-jalen-brooks',NULL,'Jalen Brooks','Classic barbering and modern styles for every generation.','Classic cuts,Kids,Scissor work','JB',1),
           ('barber-tasha-green',NULL,'Tasha Green','Sharp lines, creative cuts, and an easy chair-side vibe.','Designs,Line ups,Loc maintenance','TG',1);
+        DELETE FROM booking_slots WHERE booking_id IN (SELECT id FROM bookings WHERE customer_email LIKE '%@example.test') AND NOT EXISTS (SELECT 1 FROM internal_migrations WHERE name = 'launch_cleanup_v1');
+        DELETE FROM bookings WHERE customer_email LIKE '%@example.test' AND NOT EXISTS (SELECT 1 FROM internal_migrations WHERE name = 'launch_cleanup_v1');
+        DELETE FROM users WHERE email LIKE '%@example.test' AND NOT EXISTS (SELECT 1 FROM internal_migrations WHERE name = 'launch_cleanup_v1');
+        INSERT OR IGNORE INTO internal_migrations VALUES ('launch_cleanup_v1', datetime('now'));
       `);
     });
   }
