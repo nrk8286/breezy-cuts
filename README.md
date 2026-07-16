@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Breezy Cuts
 
-## Getting Started
+Mobile-first booking for **Breezy Cuts — “Fresh Cuts. Easy Booking.”**
 
-First, run the development server:
+## Live app
 
-```bash
+**https://breezy-cuts-app.nrk8286.workers.dev**
+
+The public app is a Cloudflare Worker backed by a strongly consistent, SQLite-backed Durable Object. It supports service/barber browsing, customer registration and login, secure sessions, guest or account bookings, conflict-safe appointment slots, and customer appointment history.
+
+## Mobile apps
+
+- Android project: `android/`
+- iOS project: `ios/`
+- Shareable Android test APK: [`release-artifacts/breezy-cuts-android-debug.apk`](release-artifacts/breezy-cuts-android-debug.apk)
+- Apple users can install the live app from Safari with **Share → Add to Home Screen** today.
+
+The APK is debug-signed for direct testing and sharing. A Play Store release needs an owner-controlled signing key. The iOS project is ready for Xcode; Apple requires macOS, Xcode 26+, an Apple Developer account, signing, and App Store/TestFlight review to create a distributable IPA.
+
+## Run locally
+
+Requirements: Node.js 22+.
+
+```powershell
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+For the original full Next.js interface, use `npm run dev:next`. The deployed Worker shell is the production entry point.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Verify and deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm run check
+npm run cf:typegen
+npm run cf:deploy
+```
 
-## Learn More
+`SESSION_SECRET` is stored as an encrypted Cloudflare Worker secret. Never commit it.
 
-To learn more about Next.js, take a look at the following resources:
+## Native builds
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```powershell
+npm run mobile:sync
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+npm run android:apk
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The generated debug APK is under `android/app/build/outputs/apk/debug/`. Native wrappers load the HTTPS Worker URL configured in `capacitor.config.ts`.
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `custom-worker.ts`: Cloudflare-native web/API entry point and SQLite Durable Object
+- `wrangler.jsonc`: Worker assets, Durable Object binding, and migration
+- `src/lib/password.ts`: Web Crypto PBKDF2 password hashing
+- `src/app`, `src/components`: full Next.js application source
+- `android`, `ios`: Capacitor native projects
+- `docs/openapi.yaml`: API contract
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The seed catalog and operating schedule are starter configuration. The owner should verify services, prices, barber profiles, business hours, and policies before paid promotion.

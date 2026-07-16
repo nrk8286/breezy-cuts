@@ -32,6 +32,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# local application data
+/data/
+/dev*.log
 
 # vercel
 .vercel
@@ -39,3 +44,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated and local deployment artifacts
+/advertising-package/
+/breezy-cuts-advertising-package.zip
+/.open-next/
+/.wrangler/
+*.tmp
+/cloudflare-env.d.ts
+/android/.gradle/
+/android/app/build/

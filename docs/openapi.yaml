@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Breezy Cuts API
+  version: 1.0.0
+  description: Same-origin API for authentication, catalog, availability, and appointments.
+servers:
+  - url: /api
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate a customer or staff member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Login' }
+      responses:
+        '200': { description: Signed HttpOnly session created }
+        '401': { description: Invalid credentials }
+        '429': { description: Too many attempts }
+  /auth/register:
+    post:
+      summary: Register a customer account
+      responses:
+        '201': { description: Account and session created }
+        '409': { description: Email already registered }
+  /auth/logout:
+    post:
+      summary: Delete the active session
+      responses:
+        '200': { description: Session deleted }
+  /catalog:
+    get:
+      summary: List active services and barbers
+      responses:
+        '200': { description: Public catalog }
+  /availability:
+    get:
+      summary: List open start times
+      parameters:
+        - { in: query, name: barberId, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: serviceId, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: date, required: true, schema: { type: string, format: date } }
+      responses:
+        '200': { description: Available ISO-8601 times }
+  /bookings:
+    get:
+      summary: List bookings visible to the signed-in user
+      responses:
+        '200': { description: Role-filtered booking list }
+        '401': { description: Sign-in required }
+    post:
+      summary: Create a confirmed booking
+      responses:
+        '201': { description: Booking created }
+        '409': { description: Selected time conflicts }
+  /bookings/{id}:
+    patch:
+      summary: Change booking status (staff only)
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Status updated }
+        '403': { description: Staff role required }
+components:
+  schemas:
+    Login:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }

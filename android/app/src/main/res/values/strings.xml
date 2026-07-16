@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Breezy Cuts</string>
+    <string name="title_activity_main">Breezy Cuts</string>
+    <string name="package_name">com.breezycuts.app</string>
+    <string name="custom_url_scheme">com.breezycuts.app</string>
+</resources>
