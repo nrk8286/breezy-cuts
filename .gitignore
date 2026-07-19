@@ -48,6 +48,7 @@ next-env.d.ts
 # Generated and local deployment artifacts
 /advertising-package/
 /breezy-cuts-advertising-package.zip
+/release-artifacts/
 /.open-next/
 /.wrangler/
 *.tmp
