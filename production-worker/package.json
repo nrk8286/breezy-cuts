@@ -1,0 +1,11 @@
+{
+  "name": "breezy-cuts-production-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "dry-run": "../node_modules/.bin/wrangler deploy --dry-run --config wrangler.validation.jsonc",
+    "deploy:version": "node scripts/deploy-version.mjs",
+    "deploy:production": "node scripts/deploy-version.mjs --deploy"
+  }
+}

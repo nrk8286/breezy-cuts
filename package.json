@@ -17,6 +17,9 @@
     "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf:deploy": "wrangler deploy",
     "worker:deploy": "wrangler deploy",
+    "production:test": "npm --prefix production-worker test",
+    "production:dry-run": "npm --prefix production-worker run dry-run",
+    "production:deploy": "npm --prefix production-worker run deploy:production",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "mobile:sync": "cap sync",
     "android:apk": "cd android && gradlew.bat assembleDebug"

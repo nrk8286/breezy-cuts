@@ -3,15 +3,18 @@
   "name": "breezy-cuts-app",
   "main": "custom-worker.ts",
   "workers_dev": true,
-  "compatibility_date": "2026-07-16",
+  "compatibility_date": "2026-08-29",
   "compatibility_flags": ["nodejs_compat"],
   "assets": { "directory": "public", "binding": "ASSETS" },
   "durable_objects": { "bindings": [{ "name": "BOOKING_DB", "class_name": "BreezyDatabase" }] },
   "ratelimits": [{ "name": "AUTH_RATE_LIMITER", "namespace_id": "48271", "simple": { "limit": 8, "period": 60 } }],
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BreezyDatabase"] }],
-  "observability": { "enabled": true },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
+  },
   "routes": [
-    { "pattern": "breezycutz.shop", "custom_domain": true },
     { "pattern": "www.breezycutz.shop", "custom_domain": true }
   ]
 }
