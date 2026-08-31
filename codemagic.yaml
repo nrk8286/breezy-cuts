@@ -1,0 +1,43 @@
+workflows:
+  android-debug:
+    name: Breezy Cuts Android Debug APK
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+
+    environment:
+      node: 22.14.0
+      java: 17
+
+    cache:
+      cache_paths:
+        - $CM_BUILD_DIR/node_modules
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+      cancel_previous_builds: true
+
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+
+      - name: Sync Capacitor Android project
+        script: npx cap sync android
+
+      - name: Configure Android SDK
+        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+
+      - name: Build debug APK
+        script: |
+          cd android
+          ./gradlew assembleDebug
+
+    artifacts:
+      - android/app/build/outputs/apk/debug/*.apk
+      - android/app/build/outputs/logs/*.txt
